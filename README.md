@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# CVD SOP Assistant - 前端界面
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+基于 Neo4j 图谱 + RAG 向量库的 CVD 薄膜机台异常处理智能问答界面。
 
-Currently, two official plugins are available:
+![界面预览](https://raw.githubusercontent.com/momobalap/cvd-sop-assistant/main/public/preview.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 功能
 
-## React Compiler
+- 🎨 视觉效果抓眼球的深色主题 Web UI
+- 🔍 自动路由判断（问原因 → Neo4j / 问流程 → RAG）
+- 📊 合并 Neo4j 图谱 + SOP 文档结果
+- 🤖 LLM 智能润色回答
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 快速开始
 
-## Expanding the ESLint configuration
+### 1. 安装依赖
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# 前端
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 后端 Python 依赖
+pip3 install flask flask-cors requests neo4j
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. 启动后端
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+python3 server.py
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. 启动前端（新终端）
+
+```bash
+npm run dev
+```
+
+访问 http://localhost:5173
+
+## 项目结构
+
+```
+cvd-sop-assistant/
+├── src/                    # React + TypeScript 前端
+│   ├── App.tsx             # 主界面
+│   └── index.css           # 样式
+├── tools/                  # 后端工具
+│   ├── neo4j_query_tool.py  # Neo4j 图谱查询
+│   ├── rag_query_tool.py    # RAG 向量检索
+│   └── polish_tool.py       # LLM 润色
+├── server.py               # Flask API 服务
+├── vite.config.ts          # Vite 配置
+└── package.json
+```
+
+## 数据后端
+
+- **Neo4j**: bolt://localhost:17687 (neo4j / password)
+- **Chroma SOP**: cvd-kg/chroma_sop_v3 (193 chunks)
+- **Ollama**: http://localhost:11434 (qwen3:4b)
+
+## 部署
+
+需要先准备好后端数据服务（Neo4j + Chroma + Ollama），然后：
+
+```bash
+npm run build
+# 打包到 dist/
 ```
